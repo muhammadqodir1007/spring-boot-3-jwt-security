@@ -1,8 +1,9 @@
+
 spring:
   datasource:
-    url: jdbc:postgresql://localhost:5432/jwt_security
-    username: username
-    password: password
+    url: jdbc:postgresql://localhost:5432/postgres
+    username: postgres
+    password: 1007
     driver-class-name: org.postgresql.Driver
   jpa:
     hibernate:
@@ -13,7 +14,12 @@ spring:
         format_sql: true
     database: postgresql
     database-platform: org.hibernate.dialect.PostgreSQLDialect
-
+cors:
+  allowedOrigin: '*'
+  allowedMethods: '*'
+  allowedHeaders: '*'
+  allowedCredentials: false
+  corsConfiguration: '/**'
 application:
   security:
     jwt:
@@ -21,3 +27,6 @@ application:
       expiration: 86400000 # a day
       refresh-token:
         expiration: 604800000 # 7 days
+server:
+  address: 0.0.0.0
+  port: 8080
