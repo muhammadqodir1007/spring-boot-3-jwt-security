@@ -27,6 +27,12 @@ public class ItemService {
     private final ItemTransactionService itemTransactionService;
     private final UserRepository userRepository;
 
+    public ApiResponse<List<Item>> search(String name) {
+        ItemType itemType = itemTypeRepository.findByName(name).orElseThrow(() -> RestException.restThrow("item not found "));
+        List<Item> items = itemRepository.searchAllByItemType(itemType);
+        return ApiResponse.successResponse(items);
+    }
+
     public ApiResponse<List<Item>> getAll() {
         return ApiResponse.successResponse(itemRepository.findAll());
     }

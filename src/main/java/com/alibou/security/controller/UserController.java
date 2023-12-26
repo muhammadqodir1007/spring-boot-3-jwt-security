@@ -4,11 +4,13 @@ import com.alibou.security.auth.AuthenticationResponse;
 import com.alibou.security.auth.RegisterRequest;
 import com.alibou.security.payload.ApiResponse;
 import com.alibou.security.payload.UserDto;
+import com.alibou.security.user.ChangePasswordRequest;
 import com.alibou.security.user.UserService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.security.Principal;
 import java.util.List;
 
 @RestController
@@ -32,12 +34,12 @@ public class UserController {
     }
 
 
-//    @PatchMapping
-//    public ResponseEntity<?> changePassword(
-//            @RequestBody ChangePasswordRequest request,
-//            Principal connectedUser
-//    ) {
-//        service.changePassword(request, connectedUser);
-//        return ResponseEntity.ok().build();
-//    }
+    @PatchMapping
+    public ResponseEntity<?> changePassword(
+            @RequestBody ChangePasswordRequest request,
+            Principal connectedUser
+    ) {
+        userService.changePassword(request, connectedUser);
+        return ResponseEntity.ok().build();
+    }
 }

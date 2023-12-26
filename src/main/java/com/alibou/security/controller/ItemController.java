@@ -22,6 +22,11 @@ public class ItemController {
         return itemService.getAll();
     }
 
+    @GetMapping("/search")
+    public ApiResponse<List<Item>> search(@RequestParam String name) {
+        return itemService.search(name);
+    }
+
     @GetMapping("/category/{id}")
     public ApiResponse<List<Item>> getItemsByCategoryId(@PathVariable int id) {
         return itemService.getAllByCategory(id);
@@ -34,8 +39,10 @@ public class ItemController {
 
     @PostMapping
     public ApiResponse<?> addItem(@RequestBody ItemDto itemDto) {
+        System.out.println("something ");
         return itemService.insert(itemDto);
     }
+
 
     @DeleteMapping
     public ApiResponse<?> deleteItemById(@RequestBody ItemDto itemDto) {

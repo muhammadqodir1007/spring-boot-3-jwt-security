@@ -13,6 +13,9 @@ public interface ItemRepository extends JpaRepository<Item, Integer> {
 
     List<Item> findAllByCategoryId(int id);
 
+    List<Item> searchAllByItemType(ItemType itemType);
+
+
     boolean existsByItemType(ItemType itemType);
 
     Optional<Item> findByItemType(ItemType itemType);

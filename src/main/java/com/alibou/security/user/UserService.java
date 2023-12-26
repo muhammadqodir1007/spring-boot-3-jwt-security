@@ -4,7 +4,6 @@ import com.alibou.security.auth.AuthenticationResponse;
 import com.alibou.security.auth.AuthenticationService;
 import com.alibou.security.auth.RegisterRequest;
 import com.alibou.security.config.JwtService;
-import com.alibou.security.exception.RestException;
 import com.alibou.security.payload.ApiResponse;
 import com.alibou.security.payload.UserDto;
 import com.alibou.security.repository.UserRepository;
@@ -71,13 +70,10 @@ public class UserService {
         UserDto userDto = new UserDto();
         userDto.setId(user.getId());
         userDto.setUsername(user.getUsername());
+        userDto.setRole(user.getRole().name());
         return userDto;
     }
 
-    public ApiResponse<?> getByUsername(String username) {
-        User user = userRepository.findByUsername(username).orElseThrow(() -> RestException.restThrow("username not found"));
-        return ApiResponse.successResponse(convertToDto(user));
-    }
 
     public void changePassword(ChangePasswordRequest request, Principal connectedUser) {
 
