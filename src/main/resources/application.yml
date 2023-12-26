@@ -1,4 +1,3 @@
-
 spring:
   datasource:
     url: jdbc:postgresql://localhost:5432/postgres
@@ -7,19 +6,13 @@ spring:
     driver-class-name: org.postgresql.Driver
   jpa:
     hibernate:
-      ddl-auto: create-drop
+      ddl-auto: create
     show-sql: false
     properties:
       hibernate:
         format_sql: true
     database: postgresql
     database-platform: org.hibernate.dialect.PostgreSQLDialect
-cors:
-  allowedOrigin: '*'
-  allowedMethods: '*'
-  allowedHeaders: '*'
-  allowedCredentials: false
-  corsConfiguration: '/**'
 application:
   security:
     jwt:

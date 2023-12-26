@@ -9,8 +9,8 @@ import com.alibou.security.payload.MaterialDto;
 import com.alibou.security.repository.MaterialCategoryRepository;
 import com.alibou.security.repository.MaterialTransactionRepository;
 import com.alibou.security.repository.MaterialTypeRepository;
+import com.alibou.security.repository.UserRepository;
 import com.alibou.security.user.User;
-import com.alibou.security.user.UserRepository;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
 
