@@ -72,45 +72,27 @@ public class ItemService {
     }
 
     public ApiResponse<?> insert(ItemDto itemDto) {
-        System.out.println("before insert");
         Category category = categoryRepository.findById(itemDto.getCategoryId()).orElseThrow(() -> RestException.restThrow("Category not found"));
         User user = userRepository.findById(itemDto.getAdminId()).orElseThrow(() -> RestException.restThrow("User not found"));
         ItemType itemType = itemTypeRepository.findById(itemDto.getItemType()).orElseThrow(() -> RestException.restThrow("Item Type not found"));
-
 
         boolean isExist = itemRepository.existsByItemType(itemType);
         Item item;
         if (isExist) {
             item = itemRepository.findByItemType(itemType).orElseThrow(() -> RestException.restThrow("item not found"));
             item.setQuantity(item.getQuantity() + itemDto.getQuantity());
-//            itemRepository.save(item);
             item.setUpdatedAt(LocalDateTime.now());
         } else {
             item = new Item();
             item.setItemType(itemType);
             item.setCategory(category);
-//            item.setUser(user);
             item.setDescription(itemDto.getDescription());
             item.setQuantity(itemDto.getQuantity());
             item.setCreatedAt(LocalDateTime.now());
-//            itemRepository.save(item);
         }
-        UserDto userDto = new UserDto();
-        userDto.setRole(user.getRole().name());
-        userDto.setId(user.getId());
-        userDto.setUsername(user.getUsername());
         item.setUser(user);
-
-        ItemResponse itemResponse = new ItemResponse();
-        itemResponse.setItemType(item.getItemType());
-        itemResponse.setQuantity(item.getQuantity());
-        itemResponse.setCategory(item.getCategory());
-        itemResponse.setId(item.getId());
-        itemResponse.setDescription(item.getDescription());
-        itemResponse.setUserDto(userDto);
-        itemResponse.setCreatedAt(item.getCreatedAt());
-        itemResponse.setUpdatedAt(item.getUpdatedAt());
-        itemRepository.save(item);
+        Item save = itemRepository.save(item);
+        ItemResponse itemResponse = mapItemToResponse(save);
         itemTransactionService.add(itemDto, "added");
         return ApiResponse.successResponse(itemResponse, "Material successfully saved");
     }
@@ -119,23 +101,9 @@ public class ItemService {
         List<Item> allByCategoryId = itemRepository.findAllByCategoryId(categoryId);
         List<ItemResponse> list = new ArrayList<>();
         for (Item item : allByCategoryId) {
-            UserDto userDto = new UserDto();
-            userDto.setUsername(item.getUser().getUsername());
-            userDto.setId(item.getUser().getId());
-            userDto.setRole(item.getUser().getRole().name());
-            ItemResponse itemResponse = new ItemResponse();
-            itemResponse.setItemType(item.getItemType());
-            itemResponse.setQuantity(item.getQuantity());
-            itemResponse.setCategory(item.getCategory());
-            itemResponse.setId(item.getId());
-            itemResponse.setDescription(item.getDescription());
-            itemResponse.setUserDto(userDto);
-            itemResponse.setCreatedAt(item.getCreatedAt());
-            itemResponse.setUpdatedAt(item.getUpdatedAt());
-            list.add(itemResponse);
+            ItemResponse toResponse = mapItemToResponse(item);
+            list.add(toResponse);
         }
-
-
         return ApiResponse.successResponse(list);
     }
 
@@ -160,4 +128,36 @@ public class ItemService {
 
         return ApiResponse.successResponse(save);
     }
+
+
+    private UserDto mapUserToDto(User user) {
+        if (user != null) {
+            UserDto userDto = new UserDto();
+            userDto.setRole(user.getRole().name());
+            userDto.setId(user.getId());
+            userDto.setUsername(user.getUsername());
+            return userDto;
+        }
+        // Handle the case when the user is null
+        return null; // Or create an empty UserDto object based on your logic
+    }
+
+    private ItemResponse mapItemToResponse(Item item) {
+        ItemResponse itemResponse = new ItemResponse();
+        itemResponse.setItemType(item.getItemType());
+        itemResponse.setQuantity(item.getQuantity());
+        itemResponse.setCategory(item.getCategory());
+        itemResponse.setId(item.getId());
+        itemResponse.setDescription(item.getDescription());
+
+        // Check if user is not null before mapping
+        if (item.getUser() != null) {
+            itemResponse.setUserDto(mapUserToDto(item.getUser()));
+        }
+
+        itemResponse.setCreatedAt(item.getCreatedAt());
+        itemResponse.setUpdatedAt(item.getUpdatedAt());
+        return itemResponse;
+    }
+
 }
