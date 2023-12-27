@@ -1,6 +1,5 @@
 package com.alibou.security.controller;
 
-import com.alibou.security.entity.Item;
 import com.alibou.security.payload.ApiResponse;
 import com.alibou.security.payload.ItemDto;
 import com.alibou.security.payload.ItemResponse;
@@ -24,7 +23,7 @@ public class ItemController {
     }
 
     @GetMapping("/search")
-    public ApiResponse<List<Item>> search(@RequestParam String name) {
+    public ApiResponse<List<ItemResponse>> search(@RequestParam String name) {
         return itemService.search(name);
     }
 
@@ -34,7 +33,7 @@ public class ItemController {
     }
 
     @GetMapping("/{id}")
-    public ApiResponse<Item> getItemById(@PathVariable int id) {
+    public ApiResponse<ItemResponse> getItemById(@PathVariable int id) {
         return itemService.getById(id);
     }
 

@@ -17,8 +17,8 @@ import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
-import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
 @AllArgsConstructor
@@ -30,46 +30,36 @@ public class ItemService {
     private final ItemTransactionService itemTransactionService;
     private final UserRepository userRepository;
 
-    public ApiResponse<List<Item>> search(String name) {
-        ItemType itemType = itemTypeRepository.findByName(name).orElseThrow(() -> RestException.restThrow("item not found "));
+    public ApiResponse<List<ItemResponse>> search(String name) {
+        ItemType itemType = itemTypeRepository.findByName(name)
+                .orElseThrow(() -> RestException.restThrow("Item not found"));
+
         List<Item> items = itemRepository.searchAllByItemType(itemType);
-        return ApiResponse.successResponse(items);
+        List<ItemResponse> responses = items.stream()
+                .map(this::mapItemToResponse)
+                .collect(Collectors.toList());
+
+        return ApiResponse.successResponse(responses);
     }
+
 
     public ApiResponse<List<ItemResponse>> getAll() {
-
         List<Item> items = itemRepository.findAll();
-        List<ItemResponse> list = new ArrayList<>();
-        for (Item item : items) {
-
-            UserDto userDto = new UserDto();
-            userDto.setRole(item.getUser().getRole().name());
-            userDto.setId(item.getUser().getId());
-            userDto.setUsername(item.getUser().getUsername());
-
-            ItemResponse itemResponse = new ItemResponse();
-            itemResponse.setItemType(item.getItemType());
-            itemResponse.setQuantity(item.getQuantity());
-            itemResponse.setCategory(item.getCategory());
-            itemResponse.setId(item.getId());
-            itemResponse.setDescription(item.getDescription());
-            itemResponse.setUserDto(userDto);
-            itemResponse.setCreatedAt(item.getCreatedAt());
-            itemResponse.setUpdatedAt(item.getUpdatedAt());
-            list.add(itemResponse);
-
-        }
-
+        List<ItemResponse> list = items.stream()
+                .map(this::mapItemToResponse)
+                .collect(Collectors.toList());
 
         return ApiResponse.successResponse(list);
-
-
     }
 
-    public ApiResponse<Item> getById(int id) {
-        Item item = itemRepository.findById(id).orElseThrow(() -> RestException.restThrow("Product not found"));
-        return ApiResponse.successResponse(item);
+
+    public ApiResponse<ItemResponse> getById(int id) {
+        Item item = itemRepository.findById(id)
+                .orElseThrow(() -> RestException.restThrow("Product not found"));
+
+        return ApiResponse.successResponse(mapItemToResponse(item));
     }
+
 
     public ApiResponse<?> insert(ItemDto itemDto) {
         Category category = categoryRepository.findById(itemDto.getCategoryId()).orElseThrow(() -> RestException.restThrow("Category not found"));
@@ -98,14 +88,14 @@ public class ItemService {
     }
 
     public ApiResponse<List<ItemResponse>> getAllByCategory(int categoryId) {
-        List<Item> allByCategoryId = itemRepository.findAllByCategoryId(categoryId);
-        List<ItemResponse> list = new ArrayList<>();
-        for (Item item : allByCategoryId) {
-            ItemResponse toResponse = mapItemToResponse(item);
-            list.add(toResponse);
-        }
-        return ApiResponse.successResponse(list);
+        List<Item> itemsByCategoryId = itemRepository.findAllByCategoryId(categoryId);
+        List<ItemResponse> itemResponses = itemsByCategoryId.stream()
+                .map(this::mapItemToResponse)
+                .collect(Collectors.toList());
+
+        return ApiResponse.successResponse(itemResponses);
     }
+
 
     public ApiResponse<?> delete(ItemDto itemDto) {
         ItemType itemType1 = itemTypeRepository.findById(itemDto.getItemType()).orElseThrow(() -> RestException.restThrow("item type not found"));
@@ -126,7 +116,7 @@ public class ItemService {
         itemTransactionService.delete(itemDto, "olindi");
 
 
-        return ApiResponse.successResponse(save);
+        return ApiResponse.successResponse(mapItemToResponse(save));
     }
 
 
