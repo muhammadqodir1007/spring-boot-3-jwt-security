@@ -6,6 +6,8 @@ import com.alibou.security.entity.ItemType;
 import com.alibou.security.exception.RestException;
 import com.alibou.security.payload.ApiResponse;
 import com.alibou.security.payload.ItemDto;
+import com.alibou.security.payload.ItemResponse;
+import com.alibou.security.payload.UserDto;
 import com.alibou.security.repository.CategoryRepository;
 import com.alibou.security.repository.ItemRepository;
 import com.alibou.security.repository.ItemTypeRepository;
@@ -15,6 +17,7 @@ import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.List;
 
 @Service
@@ -33,8 +36,34 @@ public class ItemService {
         return ApiResponse.successResponse(items);
     }
 
-    public ApiResponse<List<Item>> getAll() {
-        return ApiResponse.successResponse(itemRepository.findAll());
+    public ApiResponse<List<ItemResponse>> getAll() {
+
+        List<Item> items = itemRepository.findAll();
+        List<ItemResponse> list = new ArrayList<>();
+        for (Item item : items) {
+
+            UserDto userDto = new UserDto();
+            userDto.setRole(item.getUser().getRole().name());
+            userDto.setId(item.getUser().getId());
+            userDto.setUsername(item.getUser().getUsername());
+
+            ItemResponse itemResponse = new ItemResponse();
+            itemResponse.setItemType(item.getItemType());
+            itemResponse.setQuantity(item.getQuantity());
+            itemResponse.setCategory(item.getCategory());
+            itemResponse.setId(item.getId());
+            itemResponse.setDescription(item.getDescription());
+            itemResponse.setUserDto(userDto);
+            itemResponse.setCreatedAt(item.getCreatedAt());
+            itemResponse.setUpdatedAt(item.getUpdatedAt());
+            list.add(itemResponse);
+
+        }
+
+
+        return ApiResponse.successResponse(list);
+
+
     }
 
     public ApiResponse<Item> getById(int id) {
@@ -43,6 +72,7 @@ public class ItemService {
     }
 
     public ApiResponse<?> insert(ItemDto itemDto) {
+        System.out.println("before insert");
         Category category = categoryRepository.findById(itemDto.getCategoryId()).orElseThrow(() -> RestException.restThrow("Category not found"));
         User user = userRepository.findById(itemDto.getAdminId()).orElseThrow(() -> RestException.restThrow("User not found"));
         ItemType itemType = itemTypeRepository.findById(itemDto.getItemType()).orElseThrow(() -> RestException.restThrow("Item Type not found"));
@@ -65,18 +95,48 @@ public class ItemService {
             item.setCreatedAt(LocalDateTime.now());
 //            itemRepository.save(item);
         }
+        UserDto userDto = new UserDto();
+        userDto.setRole(user.getRole().name());
+        userDto.setId(user.getId());
+        userDto.setUsername(user.getUsername());
         item.setUser(user);
 
-
+        ItemResponse itemResponse = new ItemResponse();
+        itemResponse.setItemType(item.getItemType());
+        itemResponse.setQuantity(item.getQuantity());
+        itemResponse.setCategory(item.getCategory());
+        itemResponse.setId(item.getId());
+        itemResponse.setDescription(item.getDescription());
+        itemResponse.setUserDto(userDto);
+        itemResponse.setCreatedAt(item.getCreatedAt());
+        itemResponse.setUpdatedAt(item.getUpdatedAt());
         itemRepository.save(item);
-
         itemTransactionService.add(itemDto, "added");
-        return ApiResponse.successResponse(item, "Material successfully saved");
+        return ApiResponse.successResponse(itemResponse, "Material successfully saved");
     }
 
-    public ApiResponse<List<Item>> getAllByCategory(int categoryId) {
+    public ApiResponse<List<ItemResponse>> getAllByCategory(int categoryId) {
         List<Item> allByCategoryId = itemRepository.findAllByCategoryId(categoryId);
-        return ApiResponse.successResponse(allByCategoryId);
+        List<ItemResponse> list = new ArrayList<>();
+        for (Item item : allByCategoryId) {
+            UserDto userDto = new UserDto();
+            userDto.setUsername(item.getUser().getUsername());
+            userDto.setId(item.getUser().getId());
+            userDto.setRole(item.getUser().getRole().name());
+            ItemResponse itemResponse = new ItemResponse();
+            itemResponse.setItemType(item.getItemType());
+            itemResponse.setQuantity(item.getQuantity());
+            itemResponse.setCategory(item.getCategory());
+            itemResponse.setId(item.getId());
+            itemResponse.setDescription(item.getDescription());
+            itemResponse.setUserDto(userDto);
+            itemResponse.setCreatedAt(item.getCreatedAt());
+            itemResponse.setUpdatedAt(item.getUpdatedAt());
+            list.add(itemResponse);
+        }
+
+
+        return ApiResponse.successResponse(list);
     }
 
     public ApiResponse<?> delete(ItemDto itemDto) {
