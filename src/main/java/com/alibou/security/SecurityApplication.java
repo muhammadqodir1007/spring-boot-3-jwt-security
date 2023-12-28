@@ -4,9 +4,9 @@ import com.alibou.security.auth.AuthenticationService;
 import com.alibou.security.auth.RegisterRequest;
 import com.alibou.security.entity.Category;
 import com.alibou.security.entity.ItemType;
-import com.alibou.security.repository.CategoryRepository;
-import com.alibou.security.repository.ItemTypeRepository;
-import com.alibou.security.repository.UserRepository;
+import com.alibou.security.entity.MaterialCategory;
+import com.alibou.security.entity.MaterialType;
+import com.alibou.security.repository.*;
 import com.alibou.security.user.UserService;
 import lombok.AllArgsConstructor;
 import org.springframework.boot.CommandLineRunner;
@@ -26,6 +26,8 @@ public class SecurityApplication {
     private final UserService userService;
     private final CategoryRepository categoryRepository;
     private final ItemTypeRepository itemTypeRepository;
+    private final MaterialTypeRepository materialTypeRepository;
+    private final MaterialCategoryRepository materialCategoryRepository;
 
     public static void main(String[] args) {
         SpringApplication.run(SecurityApplication.class, args);
@@ -72,6 +74,22 @@ public class SecurityApplication {
 
             categoryRepository.save(category1);
             categoryRepository.save(category);
+
+            MaterialType maaterialType = new MaterialType();
+            maaterialType.setName("45.06");
+            MaterialType materialType1 = new MaterialType();
+            materialType1.setName("47.06");
+
+            materialTypeRepository.save(maaterialType);
+            materialTypeRepository.save(materialType1);
+
+            MaterialCategory materialCategory = new MaterialCategory();
+            materialCategory.setName("salom");
+            MaterialCategory materialCategory1 = new MaterialCategory();
+            materialCategory1.setName("salom1");
+
+            materialCategoryRepository.save(materialCategory1);
+            materialCategoryRepository.save(materialCategory);
 
 
 //            System.out.println(userRepository.findAll());

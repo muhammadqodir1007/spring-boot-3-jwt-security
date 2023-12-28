@@ -6,6 +6,8 @@ import com.alibou.security.entity.MaterialType;
 import com.alibou.security.exception.RestException;
 import com.alibou.security.payload.ApiResponse;
 import com.alibou.security.payload.dto.MaterialDto;
+import com.alibou.security.payload.dto.UserDto;
+import com.alibou.security.payload.response.MaterialTransactionRes;
 import com.alibou.security.repository.MaterialCategoryRepository;
 import com.alibou.security.repository.MaterialTransactionRepository;
 import com.alibou.security.repository.MaterialTypeRepository;
@@ -26,12 +28,52 @@ public class MaterialTransactionService {
     private final MaterialCategoryRepository materialCategoryRepository;
     private final UserRepository userRepository;
 
+    private UserDto mapUserToDto(User user) {
+        if (user != null) {
+            UserDto userDto = new UserDto();
+            userDto.setRole(user.getRole().name());
+            userDto.setId(user.getId());
+            userDto.setUsername(user.getUsername());
+            return userDto;
+        }
+        return null; // Handle the case when the user is null
+    }
+
+    private MaterialTransactionRes mapItemTransactionToResponse(MaterialTransaction materialTransaction) {
+        MaterialTransactionRes materialTransactionRes = new MaterialTransactionRes();
+        materialTransactionRes.setId(materialTransaction.getId());
+        materialTransactionRes.setMaterialType(materialTransaction.getItemType());
+        materialTransactionRes.setQuantity(materialTransaction.getQuantity());
+        materialTransactionRes.setUserDto(mapUserToDto(materialTransaction.getUser()));
+        materialTransactionRes.setCategory(materialTransaction.getCategory());
+        materialTransactionRes.setActionType(materialTransaction.getActionType());
+        materialTransactionRes.setActionDate(materialTransaction.getActionDate());
+        return materialTransactionRes;
+    }
+
+    private MaterialTransaction mapMaterialDtoToTransaction(MaterialDto item, String actionType) {
+        MaterialCategory category = materialCategoryRepository.findById(item.getCategoryId())
+                .orElseThrow(() -> RestException.restThrow("Category not found"));
+        User user = userRepository.findById(item.getAdminId())
+                .orElseThrow(() -> RestException.restThrow("User not found"));
+
+        MaterialType materialType = materialTypeRepository.findById(item.getMaterialTypeId()).orElseThrow(() -> RestException.restThrow("Material Not found"));
+
+        MaterialTransaction materialTransaction = new MaterialTransaction();
+        materialTransaction.setItemType(materialType);
+        materialTransaction.setCategory(category);
+        materialTransaction.setUser(user);
+        materialTransaction.setQuantity(item.getQuantity());
+        materialTransaction.setActionType(actionType);
+        materialTransaction.setActionDate(LocalDateTime.now());
+        return materialTransaction;
+    }
+
+
     public void add(MaterialDto item, String actionType) {
         MaterialCategory category = materialCategoryRepository.findById(item.getCategoryId()).orElseThrow(() -> RestException.restThrow("Category not found"));
         User user = userRepository.findById(item.getAdminId()).orElseThrow(() -> RestException.restThrow("User not found"));
         MaterialType itemType = materialTypeRepository.findById(item.getMaterialTypeId()).orElseThrow(() -> RestException.restThrow("Item Type not found"));
-
-
         MaterialTransaction itemTransaction = new MaterialTransaction();
         itemTransaction.setItemType(itemType);
         itemTransaction.setCategory(category);
@@ -40,22 +82,28 @@ public class MaterialTransactionService {
         itemTransaction.setActionType(actionType);
         itemTransaction.setActionDate(LocalDateTime.now());
         materialTransactionRepository.save(itemTransaction);
+
+
     }
 
-    public ApiResponse<MaterialTransaction> getById(int id) {
+    public ApiResponse<MaterialTransactionRes> getById(int id) {
         MaterialTransaction materialTransaction = materialTransactionRepository.findById(id)
                 .orElseThrow(() -> RestException.restThrow("Transaction not found with this ID"));
-        return ApiResponse.successResponse(materialTransaction);
+        MaterialTransactionRes materialTransactionRes = mapItemTransactionToResponse(materialTransaction);
+        return ApiResponse.successResponse(materialTransactionRes);
     }
 
-    public ApiResponse<List<MaterialTransaction>> getByAdminId(int adminId) {
+    public ApiResponse<List<MaterialTransactionRes>> getByAdminId(int adminId) {
         List<MaterialTransaction> allByAdminId = materialTransactionRepository.findAllByUserId(adminId);
-        return ApiResponse.successResponse(allByAdminId);
+        List<MaterialTransactionRes> materialTransactionRes = allByAdminId.stream().map(this::mapItemTransactionToResponse).toList();
+
+        return ApiResponse.successResponse(materialTransactionRes);
     }
 
-    public ApiResponse<List<MaterialTransaction>> getAll() {
+    public ApiResponse<List<MaterialTransactionRes>> getAll() {
         List<MaterialTransaction> all = materialTransactionRepository.findAll();
-        return ApiResponse.successResponse(all);
+        List<MaterialTransactionRes> materialTransactionRes = all.stream().map(this::mapItemTransactionToResponse).toList();
+        return ApiResponse.successResponse(materialTransactionRes);
     }
 
     public void delete(MaterialDto materialDto, String action) {

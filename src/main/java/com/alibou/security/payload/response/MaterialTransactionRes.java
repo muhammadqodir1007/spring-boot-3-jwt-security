@@ -8,15 +8,17 @@ import lombok.Data;
 import java.time.LocalDateTime;
 
 @Data
-public class MaterialResponse {
+public class MaterialTransactionRes {
+
 
     private int id;
-    private String description;
-    private long quantity;
-    private UserDto userDto;
     private MaterialType materialType;
-    private MaterialCategory category;
-    private LocalDateTime createdAt;
-    private LocalDateTime updatedAt;
 
+    private UserDto userDto;
+
+    private MaterialCategory category;
+
+    private long quantity;
+    private LocalDateTime actionDate;
+    private String actionType;
 }

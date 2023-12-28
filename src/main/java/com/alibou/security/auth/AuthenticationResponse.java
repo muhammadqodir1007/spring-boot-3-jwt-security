@@ -1,5 +1,6 @@
 package com.alibou.security.auth;
 
+import com.alibou.security.user.Role;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -20,4 +21,6 @@ public class AuthenticationResponse {
     private String username;
     @JsonProperty("id")
     private int id;
+    @JsonProperty("role")
+    private String role;
 }

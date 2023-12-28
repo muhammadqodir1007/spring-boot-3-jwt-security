@@ -6,6 +6,8 @@ import com.alibou.security.entity.MaterialType;
 import com.alibou.security.exception.RestException;
 import com.alibou.security.payload.ApiResponse;
 import com.alibou.security.payload.dto.MaterialDto;
+import com.alibou.security.payload.dto.UserDto;
+import com.alibou.security.payload.response.MaterialResponse;
 import com.alibou.security.repository.MaterialCategoryRepository;
 import com.alibou.security.repository.MaterialRepository;
 import com.alibou.security.repository.MaterialTypeRepository;
@@ -27,52 +29,48 @@ public class MaterialService {
     private final MaterialTransactionService materialTransactionService;
     private final UserRepository userRepository;
 
-    public ApiResponse<List<Material>> getAll() {
-        List<Material> allMaterials = materialRepository.findAll();
-        return ApiResponse.successResponse(allMaterials);
+    public ApiResponse<List<MaterialResponse>> getAll() {
+        List<Material> list = materialRepository.findAll();
+        List<MaterialResponse> collect = list.stream().map(this::mapItemToResponse).toList();
+        return ApiResponse.successResponse(collect);
     }
 
-    public ApiResponse<Material> getById(int id) {
+    public ApiResponse<MaterialResponse> getById(int id) {
         Material material = materialRepository.findById(id).orElseThrow(() -> RestException.restThrow("Material not found"));
-        return ApiResponse.successResponse(material);
+        return ApiResponse.successResponse(mapItemToResponse(material));
     }
 
     public ApiResponse<?> insert(MaterialDto materialDto) {
         MaterialCategory category = materialCategoryRepository.findById(materialDto.getCategoryId()).orElseThrow(() -> RestException.restThrow("Category not found"));
         User user = userRepository.findById(materialDto.getAdminId()).orElseThrow(() -> RestException.restThrow("User not found"));
         MaterialType itemType = materialTypeRepository.findById(materialDto.getMaterialTypeId()).orElseThrow(() -> RestException.restThrow("Item Type not found"));
-
-
         boolean isExist = materialRepository.existsByMaterialType(itemType);
-        Material item;
+        Material material;
         if (isExist) {
-            item = materialRepository.findByMaterialType(itemType).orElseThrow(() -> RestException.restThrow("item not found"));
-            item.setQuantity(item.getQuantity() + materialDto.getQuantity());
-//            itemRepository.save(item);
-            item.setUpdatedAt(LocalDateTime.now());
+            material = materialRepository.findByMaterialType(itemType).orElseThrow(() -> RestException.restThrow("material not found"));
+            material.setQuantity(material.getQuantity() + materialDto.getQuantity());
+//            itemRepository.save(material);
+            material.setUpdatedAt(LocalDateTime.now());
         } else {
-            item = new Material();
-            item.setMaterialType(itemType);
-            item.setMaterialCategory(category);
-            item.setDescription(materialDto.getDescription());
-            item.setQuantity(materialDto.getQuantity());
-            item.setCreatedAt(LocalDateTime.now());
+            material = new Material();
+            material.setMaterialType(itemType);
+            material.setMaterialCategory(category);
+            material.setDescription(materialDto.getDescription());
+            material.setQuantity(materialDto.getQuantity());
+            material.setCreatedAt(LocalDateTime.now());
         }
-        item.setUser(user);
+        material.setUser(user);
 
-
-        materialRepository.save(item);
-
+        materialRepository.save(material);
         materialTransactionService.add(materialDto, "added");
-        return ApiResponse.successResponse(item, "Material successfully saved");
+        return ApiResponse.successResponse(mapItemToResponse(material), "Material successfully saved");
     }
 
 
-    public ApiResponse<List<Material>> getAllByCategoryId(int id) {
+    public ApiResponse<List<MaterialResponse>> getAllByCategoryId(int id) {
         List<Material> all = materialRepository.findAllByMaterialCategoryId(id);
-        return ApiResponse.successResponse(all);
-
-
+        List<MaterialResponse> list = all.stream().map(this::mapItemToResponse).toList();
+        return ApiResponse.successResponse(list);
     }
 
     public ApiResponse<?> delete(MaterialDto materialDto) {
@@ -95,7 +93,40 @@ public class MaterialService {
         materialTransactionService.delete(materialDto, "olindi");
 
 
-        return ApiResponse.successResponse(save);
+        return ApiResponse.successResponse(mapItemToResponse(save));
     }
+
+
+    private UserDto mapUserToDto(User user) {
+        if (user != null) {
+            UserDto userDto = new UserDto();
+            userDto.setRole(user.getRole().name());
+            userDto.setId(user.getId());
+            userDto.setUsername(user.getUsername());
+            return userDto;
+        }
+        // Handle the case when the user is null
+        return null; // Or create an empty UserDto object based on your logic
+    }
+
+    private MaterialResponse mapItemToResponse(Material material) {
+        MaterialResponse materialResponse = new MaterialResponse();
+        materialResponse.setMaterialType(material.getMaterialType());
+        materialResponse.setQuantity(material.getQuantity());
+        materialResponse.setCategory(material.getMaterialCategory());
+        materialResponse.setId(material.getId());
+        materialResponse.setDescription(material.getDescription());
+
+        // Check if user is not null before mapping
+        if (material.getUser() != null) {
+            materialResponse.setUserDto(mapUserToDto(material.getUser()));
+        }
+
+        materialResponse.setCreatedAt(material.getCreatedAt());
+        materialResponse.setUpdatedAt(material.getUpdatedAt());
+        return materialResponse;
+    }
+
+
 }
 

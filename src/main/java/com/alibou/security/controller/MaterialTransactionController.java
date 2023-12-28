@@ -1,7 +1,7 @@
 package com.alibou.security.controller;
 
-import com.alibou.security.entity.MaterialTransaction;
 import com.alibou.security.payload.ApiResponse;
+import com.alibou.security.payload.response.MaterialTransactionRes;
 import com.alibou.security.service.MaterialTransactionService;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -21,17 +21,17 @@ public class MaterialTransactionController {
     }
 
     @GetMapping
-    public ApiResponse<List<MaterialTransaction>> getAllMaterialTransactions() {
+    public ApiResponse<List<MaterialTransactionRes>> getAllMaterialTransactions() {
         return materialTransactionService.getAll();
     }
 
     @GetMapping("/{id}")
-    public ApiResponse<MaterialTransaction> getMaterialTransactionById(@PathVariable int id) {
+    public ApiResponse<MaterialTransactionRes> getMaterialTransactionById(@PathVariable int id) {
         return materialTransactionService.getById(id);
     }
 
     @GetMapping("/admin/{id}")
-    public ApiResponse<List<MaterialTransaction>> getMaterialTransactionsByAdminId(@PathVariable int id) {
+    public ApiResponse<List<MaterialTransactionRes>> getMaterialTransactionsByAdminId(@PathVariable int id) {
         return materialTransactionService.getByAdminId(id);
     }
 
