@@ -18,6 +18,7 @@ import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
 @AllArgsConstructor
@@ -34,6 +35,18 @@ public class MaterialService {
         List<MaterialResponse> collect = list.stream().map(this::mapItemToResponse).toList();
         return ApiResponse.successResponse(collect);
     }
+
+    public ApiResponse<List<MaterialResponse>> search(String name) {
+        MaterialType materialType = materialTypeRepository.findByName(name)
+                .orElseThrow(() -> RestException.restThrow("Material not found"));
+
+        List<Material> materials = materialRepository.searchAllByMaterialType(materialType);
+        List<MaterialResponse> responses = materials.stream()
+                .map(this::mapItemToResponse)
+                .collect(Collectors.toList());
+        return ApiResponse.successResponse(responses);
+    }
+
 
     public ApiResponse<MaterialResponse> getById(int id) {
         Material material = materialRepository.findById(id).orElseThrow(() -> RestException.restThrow("Material not found"));

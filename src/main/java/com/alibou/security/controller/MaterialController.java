@@ -36,8 +36,11 @@ public class MaterialController {
     @GetMapping("/category/{id}")
     public ApiResponse<List<MaterialResponse>> getAllByCategoryId(@PathVariable int id) {
         return materialService.getAllByCategoryId(id);
+    }
 
-
+    @GetMapping("/search")
+    public ApiResponse<List<MaterialResponse>> search(@RequestParam String name) {
+        return materialService.search(name);
     }
 
 

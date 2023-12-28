@@ -17,4 +17,6 @@ public interface MaterialRepository extends JpaRepository<Material, Integer> {
     Optional<Material> findByMaterialType(MaterialType itemType);
 
     List<Material> findAllByMaterialCategoryId(int id);
+
+    List<Material> searchAllByMaterialType(MaterialType materialType);
 }
