@@ -1,7 +1,7 @@
 package com.alibou.security.controller;
 
-import com.alibou.security.entity.ItemTransaction;
 import com.alibou.security.payload.ApiResponse;
+import com.alibou.security.payload.TransactionResponse;
 import com.alibou.security.service.ItemTransactionService;
 import lombok.AllArgsConstructor;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -22,7 +22,7 @@ public class TransactionController {
     private final ItemTransactionService itemTransactionService;
 
     @GetMapping
-    public ApiResponse<List<ItemTransaction>> getAllTransactions() {
+    public ApiResponse<List<TransactionResponse>> getAllTransactions() {
         return itemTransactionService.getAll();
     }
 

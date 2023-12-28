@@ -6,6 +6,8 @@ import com.alibou.security.entity.ItemType;
 import com.alibou.security.exception.RestException;
 import com.alibou.security.payload.ApiResponse;
 import com.alibou.security.payload.ItemDto;
+import com.alibou.security.payload.TransactionResponse;
+import com.alibou.security.payload.UserDto;
 import com.alibou.security.repository.CategoryRepository;
 import com.alibou.security.repository.ItemTransactionRepository;
 import com.alibou.security.repository.ItemTypeRepository;
@@ -26,11 +28,38 @@ public class ItemTransactionService {
     private final ItemTypeRepository itemTypeRepository;
     private final UserRepository userRepository;
 
-    public void add(ItemDto item, String actionType) {
-        Category category = categoryRepository.findById(item.getCategoryId()).orElseThrow(() -> RestException.restThrow("Category not found"));
-        User user = userRepository.findById(item.getAdminId()).orElseThrow(() -> RestException.restThrow("User not found"));
-        ItemType itemType = itemTypeRepository.findById(item.getItemType()).orElseThrow(() -> RestException.restThrow("Item Type not found"));
+    // ... existing fields ...
 
+    private UserDto mapUserToDto(User user) {
+        if (user != null) {
+            UserDto userDto = new UserDto();
+            userDto.setRole(user.getRole().name());
+            userDto.setId(user.getId());
+            userDto.setUsername(user.getUsername());
+            return userDto;
+        }
+        return null; // Handle the case when the user is null
+    }
+
+    private TransactionResponse mapItemTransactionToResponse(ItemTransaction itemTransaction) {
+        TransactionResponse transactionResponse = new TransactionResponse();
+        transactionResponse.setId(itemTransaction.getId());
+        transactionResponse.setItemType(itemTransaction.getItemType());
+        transactionResponse.setQuantity(itemTransaction.getQuantity());
+        transactionResponse.setUserDto(mapUserToDto(itemTransaction.getUser()));
+        transactionResponse.setCategory(itemTransaction.getCategory());
+        transactionResponse.setActionType(itemTransaction.getActionType());
+        transactionResponse.setActionDate(itemTransaction.getActionDate());
+        return transactionResponse;
+    }
+
+    private ItemTransaction mapItemDtoToTransaction(ItemDto item, String actionType) {
+        Category category = categoryRepository.findById(item.getCategoryId())
+                .orElseThrow(() -> RestException.restThrow("Category not found"));
+        User user = userRepository.findById(item.getAdminId())
+                .orElseThrow(() -> RestException.restThrow("User not found"));
+        ItemType itemType = itemTypeRepository.findById(item.getItemType())
+                .orElseThrow(() -> RestException.restThrow("Item Type not found"));
 
         ItemTransaction itemTransaction = new ItemTransaction();
         itemTransaction.setItemType(itemType);
@@ -39,39 +68,35 @@ public class ItemTransactionService {
         itemTransaction.setQuantity(item.getQuantity());
         itemTransaction.setActionType(actionType);
         itemTransaction.setActionDate(LocalDateTime.now());
+        return itemTransaction;
+    }
+
+    public void add(ItemDto item, String actionType) {
+        ItemTransaction itemTransaction = mapItemDtoToTransaction(item, actionType);
         itemTransactionRepository.save(itemTransaction);
     }
 
-    public ApiResponse<ItemTransaction> getById(int id) {
+    public ApiResponse<TransactionResponse> getById(int id) {
         ItemTransaction itemTransaction = itemTransactionRepository.findById(id)
                 .orElseThrow(() -> RestException.restThrow("Transaction not found with this ID"));
-        return ApiResponse.successResponse(itemTransaction);
+        TransactionResponse transactionResponse = mapItemTransactionToResponse(itemTransaction);
+        return ApiResponse.successResponse(transactionResponse);
     }
 
     public ApiResponse<List<?>> getByAdminId(int adminId) {
-        List<ItemTransaction> allByAdminId = itemTransactionRepository.findAllByUserId(adminId);
-        return ApiResponse.successResponse(allByAdminId);
+        List<ItemTransaction> list = itemTransactionRepository.findAllByUserId(adminId);
+        List<TransactionResponse> collect = list.stream().map(this::mapItemTransactionToResponse).toList();
+        return ApiResponse.successResponse(collect);
     }
 
-    public ApiResponse<List<ItemTransaction>> getAll() {
+    public ApiResponse<List<TransactionResponse>> getAll() {
         List<ItemTransaction> allTransactions = itemTransactionRepository.findAll();
-        return ApiResponse.successResponse(allTransactions);
+        List<TransactionResponse> collect = allTransactions.stream().map(this::mapItemTransactionToResponse).toList();
+        return ApiResponse.successResponse(collect);
     }
 
     public ApiResponse<?> delete(ItemDto item, String actionType) {
-
-        Category category = categoryRepository.findById(item.getCategoryId()).orElseThrow(() -> RestException.restThrow("category not found"));
-        User user = userRepository.findById(item.getAdminId()).orElseThrow(() -> RestException.restThrow("user not found"));
-        ItemType itemType = itemTypeRepository.findById(item.getItemType()).orElseThrow(() -> RestException.restThrow("item type not found"));
-
-
-        ItemTransaction itemTransaction = new ItemTransaction();
-        itemTransaction.setItemType(itemType);
-        itemTransaction.setCategory(category);
-        itemTransaction.setUser(user);
-        itemTransaction.setQuantity(item.getQuantity());
-        itemTransaction.setActionDate(LocalDateTime.now());
-        itemTransaction.setActionType(actionType);
+        ItemTransaction itemTransaction = mapItemDtoToTransaction(item, actionType);
         itemTransactionRepository.save(itemTransaction);
         return ApiResponse.successResponse("Deleted successfully");
     }
