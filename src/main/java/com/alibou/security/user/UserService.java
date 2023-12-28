@@ -5,7 +5,7 @@ import com.alibou.security.auth.AuthenticationService;
 import com.alibou.security.auth.RegisterRequest;
 import com.alibou.security.config.JwtService;
 import com.alibou.security.payload.ApiResponse;
-import com.alibou.security.payload.UserDto;
+import com.alibou.security.payload.dto.UserDto;
 import com.alibou.security.repository.UserRepository;
 import com.alibou.security.token.Token;
 import com.alibou.security.token.TokenRepository;

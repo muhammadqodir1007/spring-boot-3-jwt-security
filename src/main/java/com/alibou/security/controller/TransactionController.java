@@ -1,7 +1,7 @@
 package com.alibou.security.controller;
 
 import com.alibou.security.payload.ApiResponse;
-import com.alibou.security.payload.TransactionResponse;
+import com.alibou.security.payload.response.TransactionResponse;
 import com.alibou.security.service.ItemTransactionService;
 import lombok.AllArgsConstructor;
 import org.springframework.web.bind.annotation.GetMapping;

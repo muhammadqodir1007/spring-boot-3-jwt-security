@@ -1,4 +1,4 @@
-package com.alibou.security.payload;
+package com.alibou.security.payload.dto;
 
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
@@ -7,11 +7,13 @@ import lombok.Setter;
 @Getter
 @Setter
 @RequiredArgsConstructor
-public class MaterialDto {
+public class ItemDto {
 
-    int materialTypeId;
-    int categoryId;
+    int itemType;
     String description;
     long quantity;
     int adminId;
+    int categoryId;
+
+
 }

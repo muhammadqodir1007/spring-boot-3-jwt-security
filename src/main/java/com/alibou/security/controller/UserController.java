@@ -3,7 +3,7 @@ package com.alibou.security.controller;
 import com.alibou.security.auth.AuthenticationResponse;
 import com.alibou.security.auth.RegisterRequest;
 import com.alibou.security.payload.ApiResponse;
-import com.alibou.security.payload.UserDto;
+import com.alibou.security.payload.dto.UserDto;
 import com.alibou.security.user.ChangePasswordRequest;
 import com.alibou.security.user.UserService;
 import lombok.RequiredArgsConstructor;

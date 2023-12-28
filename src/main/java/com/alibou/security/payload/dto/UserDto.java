@@ -1,4 +1,4 @@
-package com.alibou.security.payload;
+package com.alibou.security.payload.dto;
 
 import lombok.Data;
 

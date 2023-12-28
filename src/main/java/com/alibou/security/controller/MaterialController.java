@@ -2,7 +2,7 @@ package com.alibou.security.controller;
 
 import com.alibou.security.entity.Material;
 import com.alibou.security.payload.ApiResponse;
-import com.alibou.security.payload.MaterialDto;
+import com.alibou.security.payload.dto.MaterialDto;
 import com.alibou.security.service.MaterialService;
 import org.springframework.web.bind.annotation.*;
 

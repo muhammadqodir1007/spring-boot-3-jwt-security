@@ -1,8 +1,8 @@
-package com.alibou.security.payload;
+package com.alibou.security.payload.response;
 
 import com.alibou.security.entity.Category;
 import com.alibou.security.entity.ItemType;
-import jakarta.persistence.ManyToOne;
+import com.alibou.security.payload.dto.UserDto;
 import lombok.Data;
 
 import java.time.LocalDateTime;

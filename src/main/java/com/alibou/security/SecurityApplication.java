@@ -2,6 +2,10 @@ package com.alibou.security;
 
 import com.alibou.security.auth.AuthenticationService;
 import com.alibou.security.auth.RegisterRequest;
+import com.alibou.security.entity.Category;
+import com.alibou.security.entity.ItemType;
+import com.alibou.security.repository.CategoryRepository;
+import com.alibou.security.repository.ItemTypeRepository;
 import com.alibou.security.repository.UserRepository;
 import com.alibou.security.user.UserService;
 import lombok.AllArgsConstructor;
@@ -20,6 +24,8 @@ import static com.alibou.security.user.Role.MANAGER;
 public class SecurityApplication {
     private final UserRepository userRepository;
     private final UserService userService;
+    private final CategoryRepository categoryRepository;
+    private final ItemTypeRepository itemTypeRepository;
 
     public static void main(String[] args) {
         SpringApplication.run(SecurityApplication.class, args);
@@ -49,6 +55,25 @@ public class SecurityApplication {
                     .role(MANAGER)
                     .build();
             System.out.println("Manager token: " + service.register(manager).getAccessToken());
+
+
+            ItemType itemType = new ItemType();
+            itemType.setName("45.06");
+            ItemType itemType1 = new ItemType();
+            itemType1.setName("47.06");
+
+            itemTypeRepository.save(itemType);
+            itemTypeRepository.save(itemType1);
+
+            Category category = new Category();
+            category.setName("salom");
+            Category category1 = new Category();
+            category1.setName("salom1");
+
+            categoryRepository.save(category1);
+            categoryRepository.save(category);
+
+
 //            System.out.println(userRepository.findAll());
 //            System.out.println(userService.getAll());
 

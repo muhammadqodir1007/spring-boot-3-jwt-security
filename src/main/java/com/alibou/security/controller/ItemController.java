@@ -1,8 +1,8 @@
 package com.alibou.security.controller;
 
 import com.alibou.security.payload.ApiResponse;
-import com.alibou.security.payload.ItemDto;
-import com.alibou.security.payload.ItemResponse;
+import com.alibou.security.payload.dto.ItemDto;
+import com.alibou.security.payload.response.ItemResponse;
 import com.alibou.security.service.ItemService;
 import lombok.AllArgsConstructor;
 import org.springframework.web.bind.annotation.*;
