@@ -23,15 +23,13 @@ public class User implements UserDetails {
     @Id
     @GeneratedValue
     private Integer id;
-    //  private String firstname;
-//  private String lastname;
     private String username;
     private String password;
 
     @Enumerated(EnumType.STRING)
     private Role role;
 
-    @OneToMany(mappedBy = "user")
+    @OneToMany(mappedBy = "user",fetch = FetchType.EAGER)
     private List<Token> tokens;
 
     @Override

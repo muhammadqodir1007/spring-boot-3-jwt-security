@@ -24,23 +24,6 @@ import static org.springframework.security.config.http.SessionCreationPolicy.STA
 public class SecurityConfiguration {
 
 
-//    @Value("${cors.allowedMethods}")
-//    private String allowedMethods;
-//
-//    @Value("${cors.allowedHeaders}")
-//    private String allowedHeaders;
-//
-//    @Value("${cors.corsConfiguration}")
-//    private String corsConfiguration;
-
-//    @Bean
-//    public WebMvcConfigurer corsConfigurer() {
-//        return new WebMvcConfigurer() {
-//            public void addCorsMappings(CorsRegistry registry) { registry.addMapping("/**") .allowedOrigins("http://localhost:5173") .allowedMethods("GET", "POST", "PUT", "DELETE") .allowedHeaders("*") .allowCredentials(true); }
-//
-//        };
-//    }
-
     private static final String[] WHITE_LIST_URL = {"/api/auth/**",
             "/swagger-ui.html"};
     private final JwtAuthenticationFilter jwtAuthFilter;

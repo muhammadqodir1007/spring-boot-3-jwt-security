@@ -28,7 +28,6 @@ public class ItemTransactionService {
     private final ItemTypeRepository itemTypeRepository;
     private final UserRepository userRepository;
 
-    // ... existing fields ...
 
     private UserDto mapUserToDto(User user) {
         if (user != null) {

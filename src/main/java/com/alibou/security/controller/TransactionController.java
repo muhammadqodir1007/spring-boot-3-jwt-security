@@ -16,8 +16,6 @@ import java.util.List;
 @AllArgsConstructor
 public class TransactionController {
 
-//    this class belongs to item
-
 
     private final ItemTransactionService itemTransactionService;
 

@@ -128,8 +128,7 @@ public class ItemService {
             userDto.setUsername(user.getUsername());
             return userDto;
         }
-        // Handle the case when the user is null
-        return null; // Or create an empty UserDto object based on your logic
+        return null;
     }
 
     private ItemResponse mapItemToResponse(Item item) {
@@ -140,7 +139,6 @@ public class ItemService {
         itemResponse.setId(item.getId());
         itemResponse.setDescription(item.getDescription());
 
-        // Check if user is not null before mapping
         if (item.getUser() != null) {
             itemResponse.setUserDto(mapUserToDto(item.getUser()));
         }
