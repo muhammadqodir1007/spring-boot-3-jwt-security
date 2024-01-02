@@ -3,6 +3,8 @@ package com.alibou.security.repository;
 import com.alibou.security.entity.Material;
 import com.alibou.security.entity.MaterialType;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Query;
+import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
@@ -18,5 +20,8 @@ public interface MaterialRepository extends JpaRepository<Material, Integer> {
 
     List<Material> findAllByMaterialCategoryId(int id);
 
-    List<Material> searchAllByMaterialType(MaterialType materialType);
+
+    List<Material> findByMaterialTypeNameContaining(String name);
+
+
 }

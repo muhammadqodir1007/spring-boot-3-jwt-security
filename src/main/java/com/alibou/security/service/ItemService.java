@@ -6,8 +6,8 @@ import com.alibou.security.entity.ItemType;
 import com.alibou.security.exception.RestException;
 import com.alibou.security.payload.ApiResponse;
 import com.alibou.security.payload.dto.ItemDto;
-import com.alibou.security.payload.response.ItemResponse;
 import com.alibou.security.payload.dto.UserDto;
+import com.alibou.security.payload.response.ItemResponse;
 import com.alibou.security.repository.CategoryRepository;
 import com.alibou.security.repository.ItemRepository;
 import com.alibou.security.repository.ItemTypeRepository;
@@ -31,14 +31,10 @@ public class ItemService {
     private final UserRepository userRepository;
 
     public ApiResponse<List<ItemResponse>> search(String name) {
-        ItemType itemType = itemTypeRepository.findByName(name)
-                .orElseThrow(() -> RestException.restThrow("Item not found"));
-
-        List<Item> items = itemRepository.searchAllByItemType(itemType);
+        List<Item> items = itemRepository.findByItemTypeNameContaining(name);
         List<ItemResponse> responses = items.stream()
                 .map(this::mapItemToResponse)
                 .collect(Collectors.toList());
-
         return ApiResponse.successResponse(responses);
     }
 

@@ -37,10 +37,7 @@ public class MaterialService {
     }
 
     public ApiResponse<List<MaterialResponse>> search(String name) {
-        MaterialType materialType = materialTypeRepository.findByName(name)
-                .orElseThrow(() -> RestException.restThrow("Material not found"));
-
-        List<Material> materials = materialRepository.searchAllByMaterialType(materialType);
+        List<Material> materials = materialRepository.findByMaterialTypeNameContaining(name);
         List<MaterialResponse> responses = materials.stream()
                 .map(this::mapItemToResponse)
                 .collect(Collectors.toList());
@@ -56,7 +53,7 @@ public class MaterialService {
     public ApiResponse<?> insert(MaterialDto materialDto) {
         MaterialCategory category = materialCategoryRepository.findById(materialDto.getCategoryId()).orElseThrow(() -> RestException.restThrow("Category not found"));
         User user = userRepository.findById(materialDto.getAdminId()).orElseThrow(() -> RestException.restThrow("User not found"));
-        MaterialType itemType = materialTypeRepository.findById(materialDto.getMaterialTypeId()).orElseThrow(() -> RestException.restThrow("Item Type not found"));
+        MaterialType itemType = materialTypeRepository.findById(materialDto.getMaterialTypeId()).orElseThrow(() -> RestException.restThrow("Material Type not found"));
         boolean isExist = materialRepository.existsByMaterialType(itemType);
         Material material;
         if (isExist) {
