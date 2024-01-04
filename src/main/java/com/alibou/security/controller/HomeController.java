@@ -16,8 +16,8 @@ public class HomeController {
 
 
     @GetMapping
-    public Map<String, Long> count() {
-        return homeService.count();
+    public String count() {
+        return "boshqa ishim yoqmi api qiberishdan boshqa ";
 
 
     }
