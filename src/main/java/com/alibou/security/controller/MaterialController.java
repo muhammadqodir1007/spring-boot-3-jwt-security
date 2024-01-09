@@ -44,7 +44,7 @@ public class MaterialController {
     }
 
 
-    @DeleteMapping
+    @PatchMapping
     public ApiResponse<?> deleteMaterialById(@RequestBody MaterialDto materialDto) {
         return materialService.delete(materialDto);
     }

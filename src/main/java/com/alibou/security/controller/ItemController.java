@@ -44,7 +44,7 @@ public class ItemController {
     }
 
 
-    @DeleteMapping
+    @PatchMapping
     public ApiResponse<?> deleteItemById(@RequestBody ItemDto itemDto) {
         return itemService.delete(itemDto);
     }
