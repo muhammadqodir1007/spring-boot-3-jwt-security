@@ -1,4 +1,4 @@
-package com.alibou.security.exception;
+package com.alibou.security.entity.exception;
 
 import lombok.Getter;
 import org.springframework.http.HttpStatus;

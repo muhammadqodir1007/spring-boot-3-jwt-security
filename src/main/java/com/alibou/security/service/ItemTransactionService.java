@@ -3,11 +3,11 @@ package com.alibou.security.service;
 import com.alibou.security.entity.Category;
 import com.alibou.security.entity.ItemTransaction;
 import com.alibou.security.entity.ItemType;
-import com.alibou.security.exception.RestException;
+import com.alibou.security.entity.exception.RestException;
 import com.alibou.security.payload.ApiResponse;
 import com.alibou.security.payload.dto.ItemDto;
-import com.alibou.security.payload.response.TransactionResponse;
 import com.alibou.security.payload.dto.UserDto;
+import com.alibou.security.payload.response.TransactionResponse;
 import com.alibou.security.repository.CategoryRepository;
 import com.alibou.security.repository.ItemTransactionRepository;
 import com.alibou.security.repository.ItemTypeRepository;
@@ -37,7 +37,7 @@ public class ItemTransactionService {
             userDto.setUsername(user.getUsername());
             return userDto;
         }
-        return null; // Handle the case when the user is null
+        return null;
     }
 
     private TransactionResponse mapItemTransactionToResponse(ItemTransaction itemTransaction) {

@@ -13,11 +13,8 @@ public class MaterialTransactionRes {
 
     private int id;
     private MaterialType materialType;
-
     private UserDto userDto;
-
     private MaterialCategory category;
-
     private long quantity;
     private LocalDateTime actionDate;
     private String actionType;

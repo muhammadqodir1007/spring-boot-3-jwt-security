@@ -1,6 +1,6 @@
 package com.alibou.security.service;
 
-import com.alibou.security.exception.RestException;
+import com.alibou.security.entity.exception.RestException;
 import com.alibou.security.repository.UserRepository;
 import com.alibou.security.user.User;
 import org.springframework.security.core.userdetails.UserDetailsService;

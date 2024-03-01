@@ -3,7 +3,7 @@ package com.alibou.security.service;
 import com.alibou.security.entity.Material;
 import com.alibou.security.entity.MaterialCategory;
 import com.alibou.security.entity.MaterialType;
-import com.alibou.security.exception.RestException;
+import com.alibou.security.entity.exception.RestException;
 import com.alibou.security.payload.ApiResponse;
 import com.alibou.security.payload.dto.MaterialDto;
 import com.alibou.security.payload.dto.UserDto;

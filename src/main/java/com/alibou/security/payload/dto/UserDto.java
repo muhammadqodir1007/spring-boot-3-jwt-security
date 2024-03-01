@@ -7,7 +7,6 @@ public class UserDto {
 
     int id;
     String username;
-
     String role;
 
 

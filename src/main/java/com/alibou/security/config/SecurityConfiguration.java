@@ -24,8 +24,8 @@ import static org.springframework.security.config.http.SessionCreationPolicy.STA
 public class SecurityConfiguration {
 
 
-    private static final String[] WHITE_LIST_URL = {"/api/auth/**",
-            "/swagger-ui.html"};
+    private static final String[] WHITE_LIST_URL = {"/api/auth/**", "v3/api-docs/**",
+            "/swagger-ui/**"};
     private final JwtAuthenticationFilter jwtAuthFilter;
     private final AuthenticationProvider authenticationProvider;
     private final LogoutHandler logoutHandler;
@@ -33,18 +33,12 @@ public class SecurityConfiguration {
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
 
-        CorsConfiguration configuration=new CorsConfiguration();
+        CorsConfiguration configuration = new CorsConfiguration();
         configuration.addAllowedOrigin("*");
         configuration.addAllowedMethod("*");
         configuration.addAllowedHeader("*");
         configuration.setAllowCredentials(false);
         configuration.setMaxAge(3600L); // 1 hour
-
-//        http
-//                .cors(httpSecurityCorsConfigurer ->
-//                        httpSecurityCorsConfigurer.configurationSource(request ->
-//                                new CorsConfiguration().applyPermitDefaultValues()
-//                        ))
 
         http.cors(httpSecurityCorsConfigurer ->
                         httpSecurityCorsConfigurer.configurationSource(request ->
